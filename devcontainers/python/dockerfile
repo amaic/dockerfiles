@@ -7,6 +7,7 @@ RUN apt-get install -y bash-completion ca-certificates curl git
 
 RUN echo 'source /etc/bash_completion' >> ~/.bashrc
 
+
 RUN <<"DOCKERFILE_EOD"
 
 install -m 0755 -d /etc/apt/keyrings
@@ -25,11 +26,14 @@ echo 'source <(docker completion bash)' > /etc/bash_completion.d/docker
 
 DOCKERFILE_EOD
 
+
 RUN apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl git libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-RUN curl https://pyenv.run | bash
+
 
 ARG PYTHON_VERSION=3.11.8
 RUN <<"DOCKERFILE_EOD"
+
+curl https://pyenv.run | bash
 
 cat <<-"BASH_EOD" | tee --append ~/.bashrc ~/.profile
 	export PYENV_ROOT="$HOME/.pyenv"
@@ -45,3 +49,15 @@ pyenv install ${PYTHON_VERSION}
 pyenv global ${PYTHON_VERSION}
 
 DOCKERFILE_EOD
+
+
+RUN <<"DOCKERFILE_EOD"
+
+apt-get install -y pipx
+pipx ensurepath
+
+DOCKERFILE_EOD
+
+
+RUN pipx install poetry
+
