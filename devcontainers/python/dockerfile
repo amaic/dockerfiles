@@ -61,3 +61,13 @@ DOCKERFILE_EOD
 
 RUN pipx install poetry
 
+
+RUN <<"DOCKERFILE_EOD"
+
+apt-get install -y groff unzip
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+
+DOCKERFILE_EOD
