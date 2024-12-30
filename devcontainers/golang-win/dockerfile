@@ -1,0 +1,17 @@
+#escape=`
+
+FROM mcr.microsoft.com/dotnet/framework/runtime:4.8.1-windowsservercore-ltsc2022
+
+SHELL [ "powershell", "-command" ]
+
+RUN Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; `
+	[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+	Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+RUN choco install -y powershell-core
+
+SHELL [ "pwsh", "-command" ]
+
+RUN choco install -y git golang
+
+ENTRYPOINT [ "/Program Files/git/git-cmd.exe", "--command=usr/bin/bash.exe", "-l", "-i" ]
