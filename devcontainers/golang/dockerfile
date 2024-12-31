@@ -1,0 +1,16 @@
+FROM ubuntu:noble
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y bash-completion git golang
+
+RUN <<"DOCKERFILE_EOD"
+
+cat <<-"EOD" >> ~/.bashrc
+
+	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+   		. /etc/bash_completion
+	fi
+
+EOD
+
+DOCKERFILE_EOD
