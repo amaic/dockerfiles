@@ -3,6 +3,7 @@ FROM ubuntu:latest
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y bash-completion git golang
 
+USER ubuntu
 RUN <<"DOCKERFILE_EOD"
 
 cat <<-"EOD" >> ~/.bashrc
@@ -20,6 +21,7 @@ DOCKERFILE_EOD
 
 RUN <<"DOCKERFILE_EOD"
 
+go install golang.org/dl/go1.23.4@latest
 go install golang.org/x/tools/gopls@latest 
 go install github.com/go-delve/delve/cmd/dlv@latest 
 go install honnef.co/go/tools/cmd/staticcheck@latest
