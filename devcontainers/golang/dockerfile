@@ -1,4 +1,4 @@
-FROM ubuntu:noble
+FROM ubuntu:latest
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y bash-completion git golang
@@ -11,6 +11,17 @@ cat <<-"EOD" >> ~/.bashrc
    		. /etc/bash_completion
 	fi
 
+	export GOBIN=~/go/bin
+	export PATH=$PATH:~/go/bin
+
 EOD
+
+DOCKERFILE_EOD
+
+RUN <<"DOCKERFILE_EOD"
+
+go install golang.org/x/tools/gopls@latest 
+go install github.com/go-delve/delve/cmd/dlv@latest 
+go install honnef.co/go/tools/cmd/staticcheck@latest
 
 DOCKERFILE_EOD
