@@ -1,29 +1,41 @@
-FROM ubuntu:latest
+FROM ubuntu:24.10
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y bash-completion git golang
+RUN apt-get install -y bash-completion git curl sudo docker.io
+
+ARG VERSION
+ARG ARCHITECTURE
+RUN (test ${VERSION} && test ${ARCHITECTURE}) || (echo "VERSION and ARCHITECTURE are required build arguments"; exit 1)
+RUN curl https://go.dev/dl/go${VERSION}.${ARCHITECTURE}.tar.gz --location --output go.tar.gz
+RUN tar -C /usr/local -xzf go.tar.gz
+RUN rm go.tar.gz
+
+ENV GOBIN=/home/ubuntu/go/bin
+ENV PATH=$PATH:/usr/local/go/bin:$GOBIN
+
+RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN groupadd --gid 988 --users ubuntu dockerp 
 
 USER ubuntu
-RUN <<"DOCKERFILE_EOD"
+RUN <<DOCKERFILE_EOD
 
-cat <<-"EOD" >> ~/.bashrc
+cat <<-EOD >> ~/.bashrc
 
 	if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-   		. /etc/bash_completion
+		. /etc/bash_completion
 	fi
 
-	export GOBIN=~/go/bin
-	export PATH=$PATH:~/go/bin
+	export GOBIN=${GOBIN}
+	export PATH=${PATH}
 
 EOD
 
 DOCKERFILE_EOD
 
-RUN <<"DOCKERFILE_EOD"
+RUN <<DOCKERFILE_EOD
 
-go install golang.org/dl/go1.23.4@latest
-go install golang.org/x/tools/gopls@latest 
-go install github.com/go-delve/delve/cmd/dlv@latest 
-go install honnef.co/go/tools/cmd/staticcheck@latest
+go install golang.org/x/tools/gopls@v0.17.1 
+go install github.com/go-delve/delve/cmd/dlv@v1.24.0 
+go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
 
 DOCKERFILE_EOD
