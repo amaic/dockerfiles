@@ -2,9 +2,9 @@ FROM ubuntu:24.10
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y bash-completion git curl sudo docker.io
-RUN curl https://go.dev/dl/go1.23.4.linux-arm64.tar.gz --location --output go1.23.4.linux-arm64.tar.gz
-RUN tar -C /usr/local -xzf go1.23.4.linux-arm64.tar.gz
-RUN rm go1.23.4.linux-arm64.tar.gz
+RUN curl https://go.dev/dl/go1.23.4.linux-arm64.tar.gz --location --output go1.23.4.tar.gz
+RUN tar -C /usr/local -xzf go1.23.4.tar.gz
+RUN rm go1.23.4.tar.gz
 
 ENV GOBIN=/home/ubuntu/go/bin
 ENV PATH=$PATH:/usr/local/go/bin:$GOBIN
