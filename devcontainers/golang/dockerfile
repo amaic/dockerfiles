@@ -3,10 +3,9 @@ FROM ubuntu:24.10
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y bash-completion git curl sudo docker.io
 
-ARG VERSION
-ARG ARCHITECTURE
-RUN (test ${VERSION} && test ${ARCHITECTURE}) || (echo "VERSION and ARCHITECTURE are required build arguments"; exit 1)
-RUN curl https://go.dev/dl/go${VERSION}.${ARCHITECTURE}.tar.gz --location --output go.tar.gz
+ARG GO_PACKAGE_FILENAME
+RUN (test ${GO_PACKAGE_FILENAME}) || (echo "GO_PACKAGE_FILENAME is a required build argument"; exit 1)
+RUN curl https://go.dev/dl/${GO_PACKAGE_FILENAME} --location --output go.tar.gz
 RUN tar -C /usr/local -xzf go.tar.gz
 RUN rm go.tar.gz
 
@@ -34,8 +33,8 @@ DOCKERFILE_EOD
 
 RUN <<DOCKERFILE_EOD
 
-go install golang.org/x/tools/gopls@v0.17.1 
-go install github.com/go-delve/delve/cmd/dlv@v1.24.0 
-go install honnef.co/go/tools/cmd/staticcheck@v0.5.1
+go install golang.org/x/tools/gopls@latest
+go install github.com/go-delve/delve/cmd/dlv@latest
+go install honnef.co/go/tools/cmd/staticcheck@latest
 
 DOCKERFILE_EOD
