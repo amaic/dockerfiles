@@ -1,0 +1,6 @@
+services:
+  dotnet-sdk-8:
+    image: amaic/devcontainer-dotnet-sdk:8
+    build:
+      context: .
+      dockerfile: dockerfile
