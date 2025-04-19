@@ -1,6 +1,9 @@
 services:
-  dotnet-sdk-8:
-    image: amaic/devcontainer-dotnet-sdk:8
+  dotnet-sdk:
+    image: amaic/devcontainer-dotnet-sdk:${DOTNET_VERSION}
     build:
       context: .
       dockerfile: dockerfile
+      args:
+        - PLATFORM=${PLATFORM}
+        - DOTNET_VERSION=${DOTNET_VERSION}

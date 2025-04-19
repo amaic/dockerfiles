@@ -1,10 +1,29 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS v8
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
-RUN apt update && apt upgrade -y
-RUN apt install -y bash-completion jq yq sudo
+RUN apt-get update && apt-get upgrade -y
+
+WORKDIR /install
+
+ARG PLATFORM
+ARG DOTNET_VERSION
 
 RUN <<"EOD"
-cat <<"EOF" > ~/.bashrc
+
+wget https://builds.dotnet.microsoft.com/dotnet/Sdk/${DOTNET_VERSION}/dotnet-sdk-${DOTNET_VERSION}-linux-${PLATFORM}.tar.gz \
+--output-document=dotnet-sdk.tar.gz
+
+mkdir /opt/dotnet
+
+tar \
+--extract \
+--gunzip \
+--file=dotnet-sdk.tar.gz \
+--directory=/opt/dotnet
+
+EOD
+
+COPY <<"EOD" /etc/bash_completion.d/dotnet
+
 # bash parameter completion for the dotnet CLI
 
 function _dotnet_bash_complete()
@@ -18,12 +37,14 @@ function _dotnet_bash_complete()
 }
 
 complete -f -F _dotnet_bash_complete dotnet
-EOF
+
 EOD
 
-RUN useradd --uid 1000 --create-home --shell /bin/bash dev
-COPY <<"EOD" /etc/sudoers.d/dev
-dev ALL=(ALL) NOPASSWD:ALL
-EOD
+RUN rm --recursive --force /install
 
-USER dev
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/dotnet"
+ENV DOTNET_ROOT="/opt/dotnet"
+
+USER vscode
+WORKDIR /home/vscode/work
+
